@@ -8,17 +8,39 @@
 import SwiftUI
 
 struct ContentView: View {
+    // MARK: - DATA
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+        //List 1
+        List{
+            Text("Hello Earth")
+            Text("Hello Moon")
+            Text("Hello International SpaceStation")
+            
+            Section("dynamic bit")  {
+                ForEach(0..<5) {
+                    Text("Dynamic Row of List \($0)")
+                }
+            }
+            Section {
+                Text("mix and match sections in one List but not Form: thats a special kind of list. 1 list per view")
+            }
+            
+            Text("another hardcoded row")
+            Text("another hardcoded row, no problem")
         }
-        .padding()
-    }
-}
+        .listStyle(.sidebar)
+      
+        
+        
+        
+    } //end body View
+} // ContentView
 
+// MARK: - METHODS
+
+
+// MARK: - PREVIEW
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
