@@ -22,9 +22,8 @@ struct ContentView: View {
         return usedWords.count % 2 == 0
     }
         
-        
-    
-    var body: some View {
+    // MARK: - body VIEW
+        var body: some View {
 
         NavigationStack {
             List {
@@ -37,13 +36,14 @@ struct ContentView: View {
                 Section {
                     ForEach(usedWords, id: \.self) { word in
                         HStack{
-                          
+                            
                             Image(systemName: even ? "\(word.count).circle" : "\(word.count).circle.fill")
+                                .font(.largeTitle)
                             Text(word)
-                          }
+                                .italic()
                         }
                     }
-                
+                } // end Section
             } // end NavStack
             .navigationTitle(rootWord)
             .onSubmit(addNewWord)
@@ -60,8 +60,9 @@ struct ContentView: View {
     // MARK: - METHODS
     func addNewWord() {
         // taking the newWord from TextField entry > lowerCase > no whiteSpace
-        let answer = newWord.lowercased()
-        let answer2 = answer.trimmingCharacters(in: .whitespacesAndNewlines)
+        let answer = newWord.lowercased().trimmingCharacters(in:  .whitespaces)
+        // next check
+        let answer2 = specificCharDeletion(word: answer)
         // make sure theres a minimum requirement
         guard answer2.count > 0 else { return }
         // add answer to array at 0 so it comes in at the top of the List always in view
@@ -71,7 +72,22 @@ struct ContentView: View {
             //reset textField
         newWord = ""
         
-        
+    }
+    // https://www.codespeedy.com/remove-special-characters-from-a-string-in-swift/
+    // added numbers and whiteSpace
+    func specificCharDeletion(word: String)-> String {
+        let specialChar = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", " ", "+", "-", "&", "|", "!", "(", ")", "{", "}", "[", "]", "^",
+                           "~", "*", "?", ":","\\", "@","`","#","$","%","_","/",",",".",":","\""]
+        var string2 = word
+        var finalString2 = ""
+        for char in string2 {
+            if !specialChar.contains(String(char)) {
+                finalString2.append(char)
+            }
+        }
+        string2 = finalString2
+        //print(string2)
+        return string2
     }
     
     
