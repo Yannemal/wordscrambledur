@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct ContentView: View {
+   
     // MARK: - DATA
-    let starWarsCharacters = ["Luke Skywalker", "Darth Vader", "Princess Leia Organa", "Han Solo", "Chewbacca", "C-3PO", "R2-D2", "Obi-Wan Kenobi", "Yoda"]
+
     // collection of words earlier attempts
     @State private var usedWords = [String]()
     // will be word player is spelling from
@@ -23,6 +24,7 @@ struct ContentView: View {
     }
         
     // MARK: - body VIEW
+    
         var body: some View {
 
         NavigationStack {
@@ -44,24 +46,26 @@ struct ContentView: View {
                         }
                     }
                 } // end Section
-            } // end NavStack
+            } // end List
             .navigationTitle(rootWord)
             .onSubmit(addNewWord)
-        }
+            .onAppear(perform: startGame)
+        } // end NavStack
       
-        //example List 2
-        
-//        List(starWarsCharacters.sorted(), id: \.self) {
-//            Text($0)
-//        }
+   
         
     } //end body View
     
-    // MARK: - METHODS
+    /* *********************************************************************************/
+    /*                                                                                 */
+    // MARK: - METHODS                                                                 //
+    /*                                                                                 */
+    /* *********************************************************************************/
+
     func addNewWord() {
-        // taking the newWord from TextField entry > lowerCase > no whiteSpace
+        // Check 1 of the TextField entry > lowerCase > no whiteSpace
         let answer = newWord.lowercased().trimmingCharacters(in:  .whitespaces)
-        // next check
+        //  Check 2 no separate words
         let answer2 = specificCharDeletion(word: answer)
         // make sure theres a minimum requirement
         guard answer2.count > 0 else { return }
@@ -76,8 +80,8 @@ struct ContentView: View {
     // https://www.codespeedy.com/remove-special-characters-from-a-string-in-swift/
     // added numbers and whiteSpace
     func specificCharDeletion(word: String)-> String {
-        let specialChar = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", " ", "+", "-", "&", "|", "!", "(", ")", "{", "}", "[", "]", "^",
-                           "~", "*", "?", ":","\\", "@","`","#","$","%","_","/",",",".",":","\""]
+        let specialChar = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", " ", "+", "-", "&", "|", "!", "(", ")", "{", "}", "[", "]", "^", "<", ">",
+                           "~", "*", "?", ":",";", "\\", "@","`","#","$","%","_","/",",",".",":","\""]
         var string2 = word
         var finalString2 = ""
         for char in string2 {
@@ -90,13 +94,22 @@ struct ContentView: View {
         return string2
     }
     
-    
-    func loadFile() {
-        if let fileURL = Bundle.main.url(forResource: "some-file", withExtension: "txt") {
-            if let fileContents = try? String(contentsOf: fileURL) {
-                // we loaded the file into a String
+    func startGame() {
+        if let startWordsURL = Bundle.main.url(forResource: "start",
+                                               withExtension: "txt") {
+            if let startWords = try? String(contentsOf: startWordsURL) {
+                // if start.text has been loaded then we want its 10.000 words be split up in an array of strings w linebreaks
+                let allWords = startWords.components(separatedBy: "\n")
+                // grab one to use in-Game - in case it fails ?? nil-coalescing provides default
+                rootWord = allWords.randomElement() ?? "silkworm"
+                return
             }
         }
+    fatalError("Could not load start.text from bundle.")
+    }
+    
+    func isOriginal(word: String) -> Bool {
+        
     }
     
     
@@ -104,6 +117,7 @@ struct ContentView: View {
 
 
 // MARK: - PREVIEW
+
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
