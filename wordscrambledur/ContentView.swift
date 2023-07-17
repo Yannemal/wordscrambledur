@@ -39,7 +39,7 @@ struct ContentView: View {
     @State private var longestStreak : Int = 0
 
     @State private var scoreBoard = ""
-    
+    @State private var firstRound = true
     
     // MARK: - body VIEW
     
@@ -106,7 +106,13 @@ struct ContentView: View {
         wordStreak = 0
         usedWords = []
         
-        scoreBoard = "HighScore:    \(highScore)     -    longest word streak: \(longestStreak)"
+        if firstRound {
+            scoreBoard = "                   WordScrambledur           "
+        } else {
+        
+        checkHighScoreStreak()
+
+             }
         
         if let startWordsURL = Bundle.main.url(forResource: "start",
                                                withExtension: "txt") {
@@ -124,7 +130,7 @@ struct ContentView: View {
         
     fatalError("Could not load start.text from bundle.")
     }
-    
+
     
     func addNewWord() {
         if warningMessage != "" {
@@ -365,9 +371,11 @@ struct ContentView: View {
     }
     
     func checkHighScoreStreak() {
+        
         var update = false
         var buildingBoard = ""
         
+        // lets not have it highscore and streak update every word in the first round ..
         if score > highScore {
             highScore = score
             update = true
@@ -378,21 +386,32 @@ struct ContentView: View {
             update = true
         }
         
-       let scoreBoardPresented = Array("HighScore:    \(highScore)     -    longest word streak: \(longestStreak)")
+        if highScore != 0 || longestStreak != 0 {
+            firstRound = false
 
-        if update {
-            for i in 0..<scoreBoardPresented.count {
+            let scoreBoardPresented = Array("HighScore:    \(highScore)     -    longest word streak: \(longestStreak)")
+
+             if update == true && !firstRound {
+                 for i in 0..<scoreBoardPresented.count {
+                     
+                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.03 * Double(i)) {
+                         withAnimation {
+                             buildingBoard.append(scoreBoardPresented[i])
+                             scoreBoard = buildingBoard
+                         }
+                         
+                     }
+                 }
                 
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.03 * Double(i)) {
-                    withAnimation {
-                        buildingBoard.append(scoreBoardPresented[i])
-                        scoreBoard = buildingBoard
-                    }
-                    
-                }
-            }
-           
+             }
+            
+        } else if highScore == 0 && longestStreak == 0 {
+            
+            firstRound = true
+            
+
         }
+        
     }
     
 } // ContentView
